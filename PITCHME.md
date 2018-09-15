@@ -39,20 +39,10 @@ by GitPitch
 
 * 結果、通信の完全な暗号化の動きが出てきた
 
-now | tommorrow
+now | tomorrow
 --- | --- |
 DNS → | DNS over HTTPS
 TCP + TLS  →| QUIC + TLS1.3
-
----
-
-#### @color[orange](アジェンダ)
-* TLS1.3
-* Security of a transport
-* QUIC
- * handshake
- * PN encryption
-* Encryptd SNI
 
 ---
 
@@ -102,6 +92,10 @@ TCP + TLS  →| QUIC + TLS1.3
 
 ### @color[orange](Security of a transport)
 
+![Alt Text](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGpFhkziHY_Pqrw6bmdCYlzWrvJOIn95gmn2EhFYT3GdoyqIm4Gg)
+
++++
+
 * 機密性(confideniality)
  * データを覗かれていないか
 * 完全性(integrity)
@@ -117,19 +111,20 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 
 現状のTLSではman-on-the-side attackが容易にできてしまう
 
----
++++
 
 ### @color[orange](QUICプロトコル)
 
 * 暗号化とハンドシェイクを組み合わせ(TLS1.3)
 * 0-1 RTハンドシェイク
+* QUICのペイロードも暗号化
 * コネクション内でストリームを多重化 
  * ストリーム0はTLS用らしい
 * (TCPの)ヘッドオブラインブロッキング解消
 * ネットワークモビリティ
 
 +++
-構造イメージ
+### @color[orange](構造イメージ)
 
 ![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/tcp_udp_quic_http2_compared.png)
 
@@ -139,7 +134,11 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
  * src ip/port
  * dst ip/port
 * UDPですし
-* コネクションは64bitの一意IDで識別
+* 64bitのConnectionIDで識別
+* ConnectionID以外全て暗号化
+
++++
+IPアドレスが変わってもコネクションを維持できる
 
 +++
 
@@ -152,7 +151,7 @@ Rich Signaling for Congestion Control and Loss Recovery
 ![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/spdy_multiplexed_assets_head_of_line_blocked.png)
 
 +++
-TCPのヘッドオブブロッキングを解消
+### @color[orange](TCPのヘッドオブブロッキングを解消)
 ![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/quic_multiplexing.png)
 
 +++
@@ -165,6 +164,9 @@ TCPのヘッドオブブロッキングを解消
 ### @color[orange](QUIC ハンドシェイク)
 
 ![Alt Text](https://www.google.co.jp/imgres?imgurl=x-raw-image%3A%2F%2F%2F96932850de81b2d78503fca884be6056ddbd185edae94e2cf4a670ff656f47ba&imgrefurl=http%3A%2F%2Fwww.soumu.go.jp%2Fmain_content%2F000485068.pdf&docid=berV8EilmmRr2M&tbnid=17KB3lAok5aU0M%3A&vet=10ahUKEwjpso2DiLzdAhWMfbwKHU3OBuIQMwhAKAMwAw..i&w=821&h=442&bih=764&biw=1600&q=quic%20%E3%83%8F%E3%83%B3%E3%83%89%E3%82%B7%E3%82%A7%E3%82%A4%E3%82%AF&ved=0ahUKEwjpso2DiLzdAhWMfbwKHU3OBuIQMwhAKAMwAw&iact=mrc&uact=8)
+
++++
+3-wayハンドシェイクとTLSハンドシェイクを一体化
 
 +++
 
@@ -191,20 +193,19 @@ QUIC+TLSで5層構造
 →TLS recordレイヤがなくなり、4層構造になった
 QUIC packetレイヤで処理する
 
-TLSは鍵交換と相手の認証
-QUICが暗号化
++++
 
-結果、1RTTで暗号化が完結する流れとなった
-→注入攻撃に対応
+* TLSは鍵交換と相手の認証
+* QUICが暗号化
 
----
+1RTで暗号化が完結する流れにした
 
-コネクションID？
-パケット番号？
++++
 
-コネクションIDが切り替わった瞬間のパケット番号がわかるとその瞬間がバレてしまう
-
+コネクションIDが切り替わった瞬間のパケット番号がわかるとその瞬間がバレてしまう  
 パケット番号も暗号化する事に(PNE)
+
++++
 
 パケット番号の暗号化：
 AES_GCM(PN, payload)→ciphertext+AEAD_TAG, AES_CTR(ciphertext, PN)→PNE
@@ -212,29 +213,17 @@ AES_GCM(PN, payload)→ciphertext+AEAD_TAG, AES_CTR(ciphertext, PN)→PNE
 
 明示的に決められた情報だけが平文で通信される 
 
----
++++
 
-QUICはTCPを使用しないので逆順でも再送要求が発生しない
-そもそも、パケット番号が暗号化されているのでそもそも再送要求ができない
+gQUIC  
+→Google
 
-TCPの場合、携帯電話の基地局はパケットの順序がずれたときのために再送を減らすために通信をバッファリングしている。
-効果は5％くらいある。
-
-ただし、QUICではパケット番号を暗号化するのでバッファリングの意味がなくなる。
-
----
-QUICではTLSがハンドシェイク、QUICが暗号化
-ほとんどすべての通信が暗号化される(完全にすべてではない))
-
-
+iQUIC  
+→IETF
 
 ---
 
 Encrypted SNI
 SNIの暗号化
-
-
-
-
 
 ---
