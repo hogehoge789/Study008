@@ -61,7 +61,8 @@ TCP + TLS  →| QUIC + TLS1.3
 * メジャーバージョンアップと言われる程の改修
 * 0-1 RTT ハンドシェイク
 * AEAD ciphers
-* forward securityが要件として入った
+ * 古いアルゴリズムはとっぱらい
+* forward security
 * セッションチケットを使いまわさない
 
 +++
@@ -70,20 +71,21 @@ TCP + TLS  →| QUIC + TLS1.3
 
 +++
 
-![Alt Text](https://www.internetsociety.org/wp-content/uploads/2017/06/Screenshot-2017-06-20-22.15.45.png)
-
-+++
-
 ![Alt Text](https://applech2.com/wp-content/uploads/2017/06/TLS-1-3-Overview-improve-dfficiency-1024x576.jpg)
 
 +++
 
 * TLS1.2
- * Client Helloを起点にまずパラメータ交換
- * 鍵の交換を経て通信暗号化
+ * Client Helloからまずはパラメータ交換
+ * その後に鍵の交換を経て通信暗号化
 
 * TLS1.3
  * Client Helloから公開鍵暗号で暗号化
+
++++
+
+* 一度交換した鍵を再利用する事で0 RTTもできる
+* 再利用するのでセキュリティが下がる
 
 +++
 
@@ -113,31 +115,58 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 
 ---
 
-on-path attack
-man-on-the-side attack
-off-path attack
-
 現状のTLSではman-on-the-side attackが容易にできてしまう
-DTLSやIPsecなどは耐性がある
 
 ---
 
 ### @color[orange](QUICプロトコル)
 
-* TLS1.3を使った暗号化通信
-* 0-1RTハンドシェイク
-QUIC Cryptoという独自の暗号化方式があったが、TLS1.3に置き換えられている
-
-* 複数のストリームを1コネクションにまとめる multiplexing streams 
-* HTTP2(というよりTCP)の問題であるパケットの順番が保証されていないと読み込めない配信方式が改善されて高速な通信が見込める
-* モビリティ
+* 暗号化とハンドシェイクを組み合わせ(TLS1.3)
+* 0-1 RTハンドシェイク
+* コネクション内でストリームを多重化 
+* (TCPの)ヘッドオブラインブロッキング解消
+* ネットワークモビリティ
+ * QUICでは4タプルに依存しないコネクションが確保
  * 通信毎に固有のIDを保持
  * 無線通信やモバイルで強い
- * QUICでは4タプルに依存しないコネクションが確保される
+
++++
+構造イメージ
+
+![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/tcp_udp_quic_http2_compared.png)
+
++++
+* Quick UDP Internet Connections
+* いわゆる4タプルがない
+ * src ip/port
+ * dst ip/port
+* UDPですし
 
 +++
 
-QUIC+TLSで2重の暗号化がかかってしまう
+### @color[orange](フロー制御、輻輳制御)
+Rich Signaling for Congestion Control and Loss Recovery
+
++++
+
+![Alt Text](https://docs.google.com/presentation/d/13LSNCCvBijabnn1S4-Bb6wRlm79gN6hnPFHByEXXptk/present?slide=id.g17a0599c4_1164)
+
++++ 
+### @color[orange](ストリーム多重化)
+
+![Alt Text](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0t9nLS1ULcbzJONF9MXGXlSHviXAnu--yzVr-wBSAdWeRcX9S)
+
++++
+
+### @color[orange](前方誤り訂正)
+
+ 
++++
+
+### @color[orange](double encryption)
+QUIC+TLSで2重暗号化
+
+
 
 各々、フローが異なるので信頼するタイミングがズレがあるので
 暗号化通信をいつ始めていいかわからない、対応が難しい
