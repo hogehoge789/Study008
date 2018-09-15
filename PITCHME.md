@@ -74,6 +74,10 @@ TCP + TLS  →| QUIC + TLS1.3
 
 +++
 
+![Alt Text](https://applech2.com/wp-content/uploads/2017/06/TLS-1-3-Overview-improve-dfficiency-1024x576.jpg)
+
++++
+
 * TLS1.2
  * Client Helloを起点にまずパラメータ交換
  * 鍵の交換を経て通信暗号化
