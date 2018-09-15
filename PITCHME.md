@@ -49,7 +49,7 @@ TCP + TLS  →| QUIC + TLS1.3
 ### @color[orange](TLS1.3)
 
 * メジャーバージョンアップと言われる程の改修
-* 0-1 RTT ハンドシェイク
+* 0-1 RT ハンドシェイク
 * AEAD ciphers
  * 古いアルゴリズムはとっぱらい
 * forward security
@@ -57,7 +57,7 @@ TCP + TLS  →| QUIC + TLS1.3
 
 +++
 
-### @color[orange](0-1 RTT ハンドシェイク)
+### @color[orange](0-1 RT ハンドシェイク)
 
 +++
 
@@ -70,7 +70,8 @@ TCP + TLS  →| QUIC + TLS1.3
  * その後に鍵の交換を経て通信暗号化
 
 * TLS1.3
- * Client Helloから公開鍵暗号で暗号化
+ * 1RTで通信暗号化
+ * ServerHello毎に公開鍵を生成する
 
 +++
 
@@ -117,7 +118,7 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 
 * 暗号化とハンドシェイクを組み合わせ(TLS1.3)
 * 0-1 RTハンドシェイク
-* QUICのペイロードも暗号化
+* ペイロードも暗号化
 * コネクション内でストリームを多重化 
  * ストリーム0はTLS用らしい
 * (TCPの)ヘッドオブラインブロッキング解消
@@ -129,13 +130,11 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 ![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/tcp_udp_quic_http2_compared.png)
 
 +++
-* Quick UDP Internet Connections
-* いわゆる4タプルがない
+### @color[orange](Quick UDP Internet Connections)
+* 4タプルを使わない
  * src ip/port
  * dst ip/port
-* UDPですし
 * 64bitのConnectionIDで識別
-* ConnectionID以外全て暗号化
 
 +++
 IPアドレスが変わってもコネクションを維持できる
@@ -174,56 +173,89 @@ Rich Signaling for Congestion Control and Loss Recovery
 QUIC初期の問題  
 QUICとTLSでそれぞれ2重に暗号化
 
+* QUICのペイロードの暗号化
+* TLSのアプリケーション層の暗号化
+
 +++
 
 なんかクライアントとサーバで暗号化のタイミングがズレとかで大変だったらしい
 
 +++
 
-TLS上は暗号化されていても、QUICは暗号化されていなくて平文なので
-平文で通信している間はパケット挿入可能(ACK、RST)
+TLS上は暗号化されていてもQUICは暗号化されていなくて平文で通信している間はパケット挿入可能(ACK、RST)問題など
 
 +++
 TLSの方を変更
 
 +++
 
-TLSのレイヤで行っていた暗号化の仕事を全てQUIC上で行う。
-QUIC+TLSで5層構造
-→TLS recordレイヤがなくなり、4層構造になった
-QUIC packetレイヤで処理する
+* TLSのレイヤで行っていた暗号化の仕事を全てQUIC上で行う事に
+* QUIC+TLSで5層構造
+ * TLS レイヤが少なくなり、4層構造になった
+ * ↑はQUIC レイヤで処理する
 
 +++
 
-* TLSは鍵交換と相手の認証
+* TLSは鍵交換と相手の認証(ハンドシェイク)
 * QUICが暗号化
 
-1RTで暗号化が完結する流れにした
+今のように1RTで暗号化とハンドシェイクを完結する流れにした
+
++++
+### @color[orange](Packet Number暗号化)
+
+![Alt Text](https://cdn-ak.f.st-hatena.com/images/fotolife/A/ASnoKaze/20171201/20171201003908.png)
 
 +++
 
-コネクションIDが切り替わった瞬間のパケット番号がわかるとその瞬間がバレてしまう  
-パケット番号も暗号化する事に(PNE)
+* Packet Numberは送信毎に一意だが、単調増加
+* ネットワークが切り替わってもPacketNumberは使い続ける
+* クライアントを追跡できる
 
 +++
-
-パケット番号の暗号化：
-AES_GCM(PN, payload)→ciphertext+AEAD_TAG, AES_CTR(ciphertext, PN)→PNE
-※AES_CTRのnonceにchipertextの先頭使う
-
-明示的に決められた情報だけが平文で通信される 
+PacketNumberも切り替えるとか色々考えたけど面倒だからPacket Numberも暗号化する事にした(PNE)
 
 +++
-
-gQUIC  
-→Google
-
-iQUIC  
-→IETF
+QUIC内で平文なのは下記のみ
+* PacketType
+* ConnectionID
+* Protocol Version
 
 ---
+### @color[orange](まとめ１) 
+* QUIC + TLS1.3
+ * 可用性改善
+ * パフォーマンスを最適化
 
-Encrypted SNI
-SNIの暗号化
+* 事業者がプロトコルを見て最適化すると硬直化が起こる
+ * 結果的には中を見れない方がプロトコル改善できる
+
++++
+### @color[orange](まとめ２) 
+
+* 暗号化はQUICのタスク
+ * ハンドシェイクはTLS
+* だいたい暗号化される
+* what to expose is decided explicitly
+
++++
+
+* QUICは2つある
+ * gQUIC →Google
+ * iQUIC →IETF
 
 ---
+### @color[orange](Encrypted SNI) 
+SNIはClientHelloに含まれるので平文  
+暗号化するぞ
+
++++
+SNI
+* Server Name Indication
+* 1つのIPアドレスで複数ドメインの証明書を扱う機能
+* これがないと証明書毎にパブリックIPが必要
+
++++
+DNS over HTTPSでなんとかするらしい
+
++++
