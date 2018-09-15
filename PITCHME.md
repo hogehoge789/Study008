@@ -7,7 +7,9 @@ by GitPitch
 
 ---
 
-次世代通信プロトコルにおけるセキュリティ・プライバシー保護・パフォーマンス
+@color[orange](次世代通信プロトコルにおけるセキュリティ・プライバシー保護・パフォーマンス)
+
+スピーカー:@kazuho oku
 
 ---
 
@@ -15,7 +17,7 @@ by GitPitch
 内容を整理してみました。
 
 ---
-#### 内容について
+#### @color[orange](内容について)
 
 * QUICとTLS1.3についての内容
 * パフォーマンスは時間の都合上割愛
@@ -23,9 +25,15 @@ by GitPitch
 ---
 
 #### @color[orange](インターネットプロトコル変化の時代)
+なぜ変わろうとしているのか
   
 * 2013年頃に発生したスノーデン事件を皮切り
+* そのネットワークは信用できるのか？
 * ネットワークへの信頼が揺らいでしまった
+
+---
+
+技術での公平な暗号化が必要
 
 ---
 
@@ -33,22 +41,26 @@ by GitPitch
 
 now | tommorrow
 --- | --- |
-DNS | DNS over HTTPS
-TCP + TLS | QUIC + TLS1.3
+DNS → | DNS over HTTPS
+TCP + TLS  →| QUIC + TLS1.3
 
 ---
 
-#### TLSの問題点
-* RTTが多い
-* ハンドシェイク時に平文
+#### @color[orange](アジェンダ
+* TLS1.3
+* Security of a transport
+* QUIC
+ * handshake
+ * PN encryption
+* Encryptd SNI
 
 ---
 
 ### TLS1.3
 
-* 実質、メジャーバージョンアップと言われる程の改修
-* 0-1 RTTハンドシェイク
-* AEAD ciphersを使う
+* メジャーバージョンアップと言われる程の改修
+* 0-1 RTT ハンドシェイク
+* AEAD ciphers
 * forward securityが要件として入った
 * セッションチケットを使いまわさない
 
@@ -56,16 +68,16 @@ TCP + TLS | QUIC + TLS1.3
 
 ### 0-1 RTTハンドシェイク
 
-TLS1.2まではClient Helloを起点にパラメータ交換を実施し、
-その後に鍵の交換を経て通信暗号化がなされる
+![Alt Text](https://www.internetsociety.org/wp-content/uploads/2017/06/Screenshot-2017-06-20-22.15.45.png)
 
-この方式だと暗号化までに2回の通信が発生する
+---
 
-どこと通信されるかは暗号化されていない
-ここから追跡される事例があった
+* TLS1.2
+ * Client Helloを起点にパラメータ交換を実施
+ * 鍵の交換を経て通信暗号化
 
-
-TLS1.3では最初のClient Helloから公開鍵暗号を使って暗号化されている
+* TLS1.3
+ * Client Helloから公開鍵暗号で暗号化
 
 ---
 
