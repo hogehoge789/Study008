@@ -162,7 +162,7 @@ Rich Signaling for Congestion Control and Loss Recovery
 +++
 ### @color[orange](QUIC ハンドシェイク)
 
-<img src="image/quic.png">
+![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/udp_quic_with_tls.png)
 
 +++
 3-wayハンドシェイクとTLSハンドシェイクを一体化
