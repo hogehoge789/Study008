@@ -162,7 +162,7 @@ Rich Signaling for Congestion Control and Loss Recovery
 +++
 ### @color[orange](QUIC ハンドシェイク)
 
-![Alt Text](https://www.google.co.jp/imgres?imgurl=x-raw-image%3A%2F%2F%2F96932850de81b2d78503fca884be6056ddbd185edae94e2cf4a670ff656f47ba&imgrefurl=http%3A%2F%2Fwww.soumu.go.jp%2Fmain_content%2F000485068.pdf&docid=berV8EilmmRr2M&tbnid=17KB3lAok5aU0M%3A&vet=10ahUKEwjpso2DiLzdAhWMfbwKHU3OBuIQMwhAKAMwAw..i&w=821&h=442&bih=764&biw=1600&q=quic%20%E3%83%8F%E3%83%B3%E3%83%89%E3%82%B7%E3%82%A7%E3%82%A4%E3%82%AF&ved=0ahUKEwjpso2DiLzdAhWMfbwKHU3OBuIQMwhAKAMwAw&iact=mrc&uact=8)
+<img src="image/quic.png">
 
 +++
 3-wayハンドシェイクとTLSハンドシェイクを一体化
