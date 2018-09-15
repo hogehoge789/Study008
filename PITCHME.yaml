@@ -1,0 +1,10 @@
+# テーマ設定
+theme : white
+
+layout : center-left
+
+#トランジションの設定
+transition : concave
+
+#スライドのページ数表示の設定
+slide-number: true
