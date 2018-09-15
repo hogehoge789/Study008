@@ -113,7 +113,7 @@ TCP + TLS  →| QUIC + TLS1.3
 
 TLSは機密性と完全性は担保するが、可用性はTCPに依存
 
----
++++
 
 現状のTLSではman-on-the-side attackが容易にできてしまう
 
@@ -126,9 +126,6 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 * コネクション内でストリームを多重化 
 * (TCPの)ヘッドオブラインブロッキング解消
 * ネットワークモビリティ
- * QUICでは4タプルに依存しないコネクションが確保
- * 通信毎に固有のIDを保持
- * 無線通信やモバイルで強い
 
 +++
 構造イメージ
@@ -141,26 +138,24 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
  * src ip/port
  * dst ip/port
 * UDPですし
+* コネクションは64bitの一意IDで識別
 
 +++
 
 ### @color[orange](フロー制御、輻輳制御)
 Rich Signaling for Congestion Control and Loss Recovery
 
-+++
-
-![Alt Text](https://docs.google.com/presentation/d/13LSNCCvBijabnn1S4-Bb6wRlm79gN6hnPFHByEXXptk/present?slide=id.g17a0599c4_1164)
-
 +++ 
 ### @color[orange](ストリーム多重化)
 
-![Alt Text](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0t9nLS1ULcbzJONF9MXGXlSHviXAnu--yzVr-wBSAdWeRcX9S)
+![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/quic_multiplexing.png)
 
 +++
 
 ### @color[orange](前方誤り訂正)
+* 各パケットに必要以上のペイロードを含む
+* ロスしたパケットを他パケットで復元できる
 
- 
 +++
 
 ### @color[orange](double encryption)
