@@ -22,7 +22,7 @@ by GitPitch
 
 ---
 
-### インターネットプロトコル変革の時
+#### インターネットプロトコル変化の時代
   
 * 2013年頃に発生したスノーデン事件を皮切り
 * ネットワークへの信頼が揺らいでしまった
@@ -31,13 +31,14 @@ by GitPitch
 
 * 結果、通信の完全な暗号化の動きが出てきた
 
-DNS → DNS over HTTPS  
-TCP → QUIC  
-TLS1.2 → TLS1.3  
+now | tommorrow
+--- | --- |
+DNS | DNS over HTTPS
+TCP + TLS | QUIC + TLS1.3
 
 ---
 
-### TLSの問題点
+#### TLSの問題点
 * RTTが多い
 * ハンドシェイク時に平文
 
