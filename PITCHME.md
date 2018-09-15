@@ -124,6 +124,7 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 * 暗号化とハンドシェイクを組み合わせ(TLS1.3)
 * 0-1 RTハンドシェイク
 * コネクション内でストリームを多重化 
+ * ストリーム0はTLS用らしい
 * (TCPの)ヘッドオブラインブロッキング解消
 * ネットワークモビリティ
 
@@ -143,11 +144,15 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 +++
 
 ### @color[orange](フロー制御、輻輳制御)
-Rich Signaling for Congestion Control and Loss Recovery
+Rich Signaling for Congestion Control and Loss Recovery  
+なんか色々あるっぽい
 
 +++ 
 ### @color[orange](ストリーム多重化)
+![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/spdy_multiplexed_assets_head_of_line_blocked.png)
 
++++
+TCPのヘッドオブブロッキングを解消
 ![Alt Text](https://ma.ttias.be/wp-content/uploads/2016/07/quic_multiplexing.png)
 
 +++
@@ -157,18 +162,29 @@ Rich Signaling for Congestion Control and Loss Recovery
 * ロスしたパケットを他パケットで復元できる
 
 +++
+### @color[orange](QUIC ハンドシェイク)
+
+![Alt Text](https://www.google.co.jp/imgres?imgurl=x-raw-image%3A%2F%2F%2F96932850de81b2d78503fca884be6056ddbd185edae94e2cf4a670ff656f47ba&imgrefurl=http%3A%2F%2Fwww.soumu.go.jp%2Fmain_content%2F000485068.pdf&docid=berV8EilmmRr2M&tbnid=17KB3lAok5aU0M%3A&vet=10ahUKEwjpso2DiLzdAhWMfbwKHU3OBuIQMwhAKAMwAw..i&w=821&h=442&bih=764&biw=1600&q=quic%20%E3%83%8F%E3%83%B3%E3%83%89%E3%82%B7%E3%82%A7%E3%82%A4%E3%82%AF&ved=0ahUKEwjpso2DiLzdAhWMfbwKHU3OBuIQMwhAKAMwAw&iact=mrc&uact=8)
+
++++
 
 ### @color[orange](double encryption)
-QUIC+TLSで2重暗号化
+QUIC初期の問題  
+QUICとTLSでそれぞれ2重に暗号化
 
++++
 
+なんかクライアントとサーバで暗号化のタイミングがズレとかで大変だったらしい
 
-各々、フローが異なるので信頼するタイミングがズレがあるので
-暗号化通信をいつ始めていいかわからない、対応が難しい
++++
 
 TLS上は暗号化されていても、QUICは暗号化されていなくて平文なので
-平文で通信している間は当然ながらパケット挿入可能(ACK、RST)
-→TLSプロトコルを変更した
+平文で通信している間はパケット挿入可能(ACK、RST)
+
++++
+TLSの方を変更
+
++++
 
 TLSのレイヤで行っていた暗号化の仕事を全てQUIC上で行う。
 QUIC+TLSで5層構造
