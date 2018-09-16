@@ -118,7 +118,7 @@ TLSは機密性と完全性は担保するが、可用性はTCPに依存
 
 * 暗号化とハンドシェイクを組み合わせ(TLS1.3)
 * 0-1 RTハンドシェイク
-* ペイロードも暗号化
+* ヘッダ、ペイロードも暗号化
 * コネクション内でストリームを多重化 
  * ストリーム0はTLS用らしい
 * (TCPの)ヘッドオブラインブロッキング解消
@@ -156,7 +156,7 @@ Rich Signaling for Congestion Control and Loss Recovery
 +++
 
 ### @color[orange](前方誤り訂正)
-* 各パケットに必要以上のペイロードを含む
+* 各パケットに必要以上のヘッダデータを含む
 * ロスしたパケットを他パケットで復元できる
 
 +++
@@ -174,7 +174,7 @@ Rich Signaling for Congestion Control and Loss Recovery
 QUIC初期の問題  
 QUICとTLSでそれぞれ2重に暗号化
 
-* QUICのペイロードの暗号化
+* QUICのヘッダ・ペイロードの暗号化
 * TLSのアプリケーション層の暗号化
 
 +++
